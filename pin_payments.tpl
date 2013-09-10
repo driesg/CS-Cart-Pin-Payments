@@ -20,11 +20,11 @@
 
 
 <div class="control-group">
-    <label class="control-label" for="pp_test_mode">{__("test_live_mode")}:</label>
+    <label class="control-label" for="pp_test_mode">Sandbox (test mode):</label>
    <div class="controls">
         <select name="payment_data[processor_params][test]" id="pp_test_mode">
-           <option value="Y" {if $processor_params.test == "Y"}selected="selected"{/if}>{__("test")}</option>
-           <option value="N" {if $processor_params.test == "N"}selected="selected"{/if}>{__("live")}</option>
+           <option value="Y" {if $processor_params.test == "Y"}selected="selected"{/if}>Yes</option>
+           <option value="N" {if $processor_params.test == "N"}selected="selected"{/if}>No - live payments</option>
        </select>
    </div>
 </div>
