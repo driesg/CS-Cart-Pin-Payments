@@ -6,7 +6,7 @@ This versions only works with CS-Cart v4.x. This module is also available for CS
 
 Pin Payments only supports VISA and MasterCard.
 
-## COMING SOON - Do not use this yet
+## COMING SOON - Do not use this yet.
 
 ##Installation
 According to the [Knowledge base](http://kb.cs-cart.com/new-payment) - modified for v4
