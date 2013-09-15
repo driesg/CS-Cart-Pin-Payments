@@ -12,7 +12,7 @@
 </div>
 
 <div class="control-group">
-    <label class="control-label" for="pp_order_prefix">Order Prefix:</label>
+    <label class="control-label" for="pp_order_prefix">{__("order_prefix")}:</label>
     <div class="controls">
         <input type="text" name="payment_data[processor_params][order_prefix]" id="pp_order_prefix" value="{$processor_params.order_prefix}"  size="60">
     </div>
