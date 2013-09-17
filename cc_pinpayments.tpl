@@ -141,12 +141,13 @@
         // Handle Response from Pin Payments
         function pinResponse(response){
             console.log(response); // debugging only
-            // if we get a good response
+            
             if (response.response) {
-
-                $.each(response.response, function(k, v){
-                    $('<input>').attr({ldelim}type: 'hidden', name: 'pin_'+k{rdelim}).val(v).appendTo(form);
-                });
+                // Add data to the form
+                $('<input>').attr({ldelim}type: 'hidden', name: 'pin_card_token'{rdelim}).val(response.response.token).appendTo(form);
+                $('<input>').attr({ldelim}type: 'hidden', name: 'pin_ip'{rdelim}).val(response.ip_address).appendTo(form);
+                // Submit the form
+                form.get(0).submit();
 
             } else {
                 $('.description', pin_errors).text(response.error_description);
@@ -154,7 +155,7 @@
                 if (response.messages) { 
                     $.each(response.messages, function(i, m){ 
                         $('input[id^="cc_'+m.param+'"]').addClass('cm-failed-field xyz');
-                        // change to append to !!
+                        // to do: change to appendTo !!
                         elist.append('<li>'+m.message+'</li>');
                     });
                 }
