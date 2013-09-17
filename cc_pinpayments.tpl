@@ -7,10 +7,13 @@
     {script src="https://api.pin.net.au/pin.js"}
 {/if}
 <div class="clearfix">
+    <div id="hidden-fields">
+        <input type="hidden" name="pin_payments" id="pin_payments" value="true">
+    </div>
     <div class="credit-card">
             <div class="control-group">
                 <label for="cc_number{$id_suffix}" class="cm-required">{__("card_number")}</label>
-                <input id="cc_number{$id_suffix}" size="35" type="text" name="payment_info[card_number]" value="" class="input-text cm-autocomplete-off" />
+                <input id="cc_number{$id_suffix}" size="35" type="text" value="" class="input-text cm-autocomplete-off" />
                 <ul class="cc-icons-wrap cc-icons" id="cc_icons{$id_suffix}">
                     <li class="cc-icon cm-cc-default"><span class="default">&nbsp;</span></li>
                     <li class="cc-icon cm-cc-visa"><span class="visa">&nbsp;</span></li>
@@ -24,18 +27,18 @@
     
             <div class="control-group">
                 <label for="cc_name{$id_suffix}" class="cm-required">{__("valid_thru")}</label>
-                <input type="text" id="cc_exp_month{$id_suffix}" name="payment_info[expiry_month]" value="" size="2" maxlength="2" class="input-text-short" />&nbsp;&nbsp;/&nbsp;&nbsp;<input type="text" id="cc_exp_year{$id_suffix}" name="payment_info[expiry_year]" value="" size="2" maxlength="2" class="input-text-short" />&nbsp;
+                <input type="text" id="cc_expiry_month{$id_suffix}" value="" size="2" maxlength="2" class="input-text-short" />&nbsp;&nbsp;/&nbsp;&nbsp;<input type="text" id="cc_expiry_year{$id_suffix}"  value="" size="2" maxlength="2" class="input-text-short" />&nbsp;
             </div>
     
             <div class="control-group">
                 <label for="cc_name{$id_suffix}" class="cm-required">{__("cardholder_name")}</label>
-                <input id="cc_name{$id_suffix}" size="35" type="text" name="payment_info[cardholder_name]" value="" class="input-text uppercase" />
+                <input id="cc_name{$id_suffix}" size="35" type="text"  value="" class="input-text uppercase" />
             </div>
     </div>
     
     <div class="control-group cvv-field">
-        <label for="cc_cvv2{$id_suffix}" class="cm-required cm-integer cm-autocomplete-off">{__("cvv2")}</label>
-        <input id="cc_cvv2{$id_suffix}" type="text" name="payment_info[cvv2]" value="" size="4" maxlength="4" class="input-text-short" />
+        <label for="cc_cvc{$id_suffix}" class="cm-required cm-integer cm-autocomplete-off">{__("cvv2")}</label>
+        <input id="cc_cvc{$id_suffix}" type="text" value="" size="4" maxlength="4" class="input-text-short" />
 
         <div class="cvv2">{__("what_is_cvv2")}
             <div class="cvv2-note">
@@ -61,6 +64,10 @@
 
             </div>
         </div>
+    </div>
+    <div id="pin_errors">
+        <h4 class="description"></h4>
+        <ul></ul>
     </div>
 </div>
 
@@ -93,30 +100,69 @@
                 }
             }
         });
-        // We Start Here
-                {foreach from=$profile_fields.B item="field"}
-                {assign var="value" value=$cart.user_data|fn_get_profile_field_value:$field}
-                {if $value}
-                    x['{$field.field_name|replace:"_":"-"}'] ="{$value}";
-                {/if}
-            {/foreach}
 
-        console.log(_);
+        // We Start Here
+        // get the form and submit button - this is workaround with a hidden field since 
+        // we can't target form element directly
+        form = $('#pin_payments').closest('form');
+        form.addClass("pin-payments");
+        submit = form.find(":submit");
+        pin_errors = $('#pin_errors');
+
         // Set Publishable Key
         Pin.setPublishableKey("{$payment_data.processor_params.publishable_key}");
-        $('input[name="dispatch[checkout.place_order]"]').click(function(e){
+
+        form.submit(function(e){
             // don't submit form yet
             e.preventDefault();
             // hide errors (if any)
-            
-            // Disable Submit so users don't click twive
-            $(this).attr({disbabled:true});
+            pin_errors.hide();
+            // Disable Submit so users don't click twice
+            submit.prop("disabled", true);
             // Get card details so we can create a token
-
+            // escaping the curly braces ~ Smarty
+            var card = {ldelim}
+                number: $('input[id^="cc_number"]').val(),
+                name: $('input[id^="cc_name"]').val(),
+                expiry_month: $('input[id^="cc_expiry_month"]').val(),
+                expiry_year: $('input[id^="cc_expiry_year"]').val(),
+                cvc: $('input[id^="cc_cvc"]').val(),
+                address_line1: "{$cart.user_data.b_address}",
+                address_line2: "{$cart.user_data.b_address_2}",
+                address_city: "{$cart.user_data.b_city}",
+                address_state: "{$cart.user_data.b_state}",
+                address_postcode: "{$cart.user_data.b_zipcode}",
+                address_country: "{$cart.user_data.b_country}"
+            {rdelim};
             // Create token and handle response from Pin
-            
-
+            Pin.createToken(card, pinResponse);
         });
+        
+        // Handle Response from Pin Payments
+        function pinResponse(response){
+            console.log(response); // debugging only
+            // if we get a good response
+            if (response.response) {
+
+                $.each(response.response, function(k, v){
+                    $('<input>').attr({ldelim}type: 'hidden', name: 'pin_'+k{rdelim}).val(v).appendTo(form);
+                });
+
+            } else {
+                $('.description', pin_errors).text(response.error_description);
+                var elist = $('ul', pin_errors);
+                if (response.messages) { 
+                    $.each(response.messages, function(i, m){ 
+                        $('input[id^="cc_'+m.param+'"]').addClass('cm-failed-field xyz');
+                        // change to append to !!
+                        elist.append('<li>'+m.message+'</li>');
+                    });
+                }
+                pin_errors.show();
+                // re-enable submit
+                submit.prop("disabled", false);
+            }
+        }
     });
 })(Tygh, Tygh.$);
 </script>
