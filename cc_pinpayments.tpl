@@ -143,8 +143,8 @@
             
             if (response.response) {
                 // Add data to the form
-                $('<input>').attr({ldelim}type: 'hidden', name: 'payment_info[pin_card_token]'{rdelim}).val(response.response.token).appendTo(form);
-                $('<input>').attr({ldelim}type: 'hidden', name: 'payment_info[pin_ip]'{rdelim}).val(response.ip_address).appendTo(form);
+                $('<input>').attr({ldelim}type: 'hidden', name: 'payment_info[card_token]'{rdelim}).val(response.response.token).appendTo(form);
+                $('<input>').attr({ldelim}type: 'hidden', name: 'payment_info[ip_address]'{rdelim}).val(response.ip_address).appendTo(form);
                 // Submit the form by removing and adding the appropriate cs-cart classes
                 // and triggering a click
                 submit.removeClass('cm-no-submit');
