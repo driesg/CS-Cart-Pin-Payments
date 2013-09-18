@@ -24,7 +24,7 @@ $data['currency'] = 'AUD'; // fix this !! Can be USD as well to do
 $data['ip_address'] = $order_info['payment_info']['ip_address'];
 $data['card_token'] = $order_info['payment_info']['card_token'];
 
-
+Registry::set('log_cut_data', array('card_token', 'ip_address'));
 // Need to authenticate to make an API call
 $http_response =  Http::post($api, $data, 
     array( 'basic_auth' => array($secretkey, '')  )
@@ -42,8 +42,8 @@ if($success == "true" && fn_format_price($amount) == fn_format_price($order_info
 	$pp_response["reason_text"] = $message;
   $pp_response['card_number'] = $return->response->card->display_number;
   $pp_response['card_name'] = $return->response->card->name;
-  $pp_response['card_exp_m'] = $return->response->card->expiry_month;
-  $pp_response['card_exp_y'] = $return->response->card->expiry_year;
+  $pp_response['expiry_month'] = $return->response->card->expiry_month;
+  $pp_response['expiry_year'] = $return->response->card->expiry_year;
 
 } else {
 	$pp_response['order_status'] = 'F';

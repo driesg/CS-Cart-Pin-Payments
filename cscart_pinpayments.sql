@@ -9,4 +9,4 @@ INSERT INTO cscart_payment_processors (processor_id, processor, processor_script
 ------------------------
 # Only for English... Adapt if necessary
 
-INSERT INTO cscart_language_values (`lang_code`, `name`, `value`) VALUES ('en', 'card_token', 'Card Token'), ('en', 'card_name', 'Card Name'), ('en', 'card_number', 'Card Number');
+INSERT INTO cscart_language_values (`lang_code`, `name`, `value`) VALUES ('en', 'card_token', 'Card Token'), ('en', 'card_name', 'Card Name');

@@ -114,7 +114,7 @@
         // Set Publishable Key
         Pin.setPublishableKey("{$payment_data.processor_params.publishable_key}");
 
-        form.submit(function(e){
+        submit.click(function(e){
             // no need to disable the default event because we added cm-no-submit: see a few lines higher
             // hide errors (if any)
             pin_errors.hide();
