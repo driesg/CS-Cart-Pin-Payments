@@ -1,3 +1,5 @@
+# ! Make sure table prefix is the same 
+
 --------------------------------
 -- Install Payment Processors --
 --------------------------------
