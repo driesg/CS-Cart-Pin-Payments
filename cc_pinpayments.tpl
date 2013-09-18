@@ -107,18 +107,17 @@
         form = $('#pin_payments').closest('form');
         form.addClass("pin-payments");
         submit = form.find(":submit");
+        // prevent the form from submitting see http://docs.cs-cart.com/microformats-list#Form_submitting_prohibition
+        submit.addClass('cm-no-submit'); 
         pin_errors = $('#pin_errors');
 
         // Set Publishable Key
         Pin.setPublishableKey("{$payment_data.processor_params.publishable_key}");
 
         form.submit(function(e){
-            // don't submit form yet
-            e.preventDefault();
+            // no need to disable the default event because we added cm-no-submit: see a few lines higher
             // hide errors (if any)
             pin_errors.hide();
-            // Disable Submit so users don't click twice
-            submit.prop("disabled", true);
             // Get card details so we can create a token
             // escaping the curly braces ~ Smarty
             var card = {ldelim}
@@ -144,18 +143,20 @@
             
             if (response.response) {
                 // Add data to the form
-                $('<input>').attr({ldelim}type: 'hidden', name: 'pin_card_token'{rdelim}).val(response.response.token).appendTo(form);
-                $('<input>').attr({ldelim}type: 'hidden', name: 'pin_ip'{rdelim}).val(response.ip_address).appendTo(form);
-                // Submit the form
-                form.get(0).submit();
+                $('<input>').attr({ldelim}type: 'hidden', name: 'payment_info[pin_card_token]'{rdelim}).val(response.response.token).appendTo(form);
+                $('<input>').attr({ldelim}type: 'hidden', name: 'payment_info[pin_ip]'{rdelim}).val(response.ip_address).appendTo(form);
+                // Submit the form by removing and adding the appropriate cs-cart classes
+                // and triggering a click
+                submit.removeClass('cm-no-submit');
+                submit.addClass('cm-submit');
+                submit.trigger('click');
 
             } else {
                 $('.description', pin_errors).text(response.error_description);
                 var elist = $('ul', pin_errors);
                 if (response.messages) { 
                     $.each(response.messages, function(i, m){ 
-                        $('input[id^="cc_'+m.param+'"]').addClass('cm-failed-field xyz');
-                        // to do: change to appendTo !!
+                        $('input[id^="cc_'+m.param+'"]').addClass('cm-failed-field pin-error');
                         elist.append('<li>'+m.message+'</li>');
                     });
                 }
