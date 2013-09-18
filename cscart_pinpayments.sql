@@ -1,6 +1,7 @@
 --------------------------------
 -- Install Payment Processors --
 --------------------------------
+# 1005 is the ID - CS-Cart recommends >1000 so 1005 should be safe
 INSERT INTO cscart_payment_processors (processor_id, processor, processor_script,processor_template, admin_template, callback, type) VALUES ('1005', 'Pin Payments','pin_payments.php', 'views/orders/components/payments/cc_pinpayments.tpl','pin_payments.tpl', 'Y', 'P');
 
 ------------------------
