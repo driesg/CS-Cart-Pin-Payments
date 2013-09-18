@@ -14,19 +14,6 @@ if ($processor_data['processor_params']['test'] == 'Y') {
 $prefix = $processor_data['processor_params']['order_prefix'];
 $secretkey = $processor_data['processor_params']['secret_key'];
 
-// $payment_description = 'Products:';
-// // Products
-// if (!empty($order_info['items'])) {
-// 	foreach ($order_info['items'] as $v) {
-// 		$payment_description .= (preg_replace('/[^\w\s]/i', '', $v['product']) ."; amount=" . $v['amount'] . ";");
-// 	}
-// }
-// // Gift Certificates
-// if (!empty($order_info['gift_certificates'])) {
-// 	foreach ($order_info['gift_certificates'] as $v) {
-// 		$payment_description .= ($v['gift_cert_code'] ."; amount=1;");
-// 	}
-// }
 
 // Build the data array
 $data = array();
@@ -35,17 +22,8 @@ $data['description'] = $prefix.' order #'.$order_info['order_id'];
 $data['amount'] = strval($order_info['total']*100); //cents !
 $data['currency'] = 'AUD'; // fix this !! Can be USD as well to do
 $data['ip_address'] = $order_info['ip_address'];
-$card = array(  'number' => $order_info['payment_info']['card_number'],
-                'expiry_month' => $order_info['payment_info']['expiry_month'],
-                'expiry_year' => '20'.$order_info['payment_info']['expiry_year'], //Dirty, but works for the next 87 years
-                'cvc' => $order_info['payment_info']['cvv2'],
-                'name' => $order_info['payment_info']['cardholder_name'],
-                'address_line1' => $order_info['b_address'],
-                'address_city' => $order_info['b_city'],
-                'address_postcode' => $order_info['b_zipcode'],
-                'address_state' => $order_info['b_state'],
-                'address_country' => $order_info['b_country']);
-$data['card'] = $card;
+$data['ip_address'] = $order_info['payment_info']['pin_ip'];
+$data['card_token'] = $order_info['payment_info']['pin_card_token'];
 
 
 // Need to authenticate to make an API call
