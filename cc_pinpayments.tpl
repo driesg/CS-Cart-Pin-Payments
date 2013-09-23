@@ -32,7 +32,7 @@
     
             <div class="control-group">
                 <label for="cc_name{$id_suffix}" class="cm-required">{__("cardholder_name")}</label>
-                <input id="cc_name{$id_suffix}" size="35" type="text"  value="" class="input-text uppercase" />
+                <input id="cc_name{$id_suffix}" size="35" type="text"  value="" class="input-text " />
             </div>
     </div>
     
@@ -64,10 +64,6 @@
 
             </div>
         </div>
-    </div>
-    <div id="pin_errors">
-        <h4 class="description"></h4>
-        <ul></ul>
     </div>
 </div>
 
@@ -104,12 +100,13 @@
         // We Start Here
         // get the form and submit button - this is workaround with a hidden field since 
         // we can't target form element directly
+        loading = $('#ajax_loading_box');
         form = $('#pin_payments').closest('form');
         form.addClass("pin-payments");
         submit = form.find(":submit");
+        submitContainer = submit.closest('.checkout-buttons');
         // prevent the form from submitting see http://docs.cs-cart.com/microformats-list#Form_submitting_prohibition
         submit.addClass('cm-no-submit'); 
-        pin_errors = $('#pin_errors');
 
         // Set Publishable Key
         Pin.setPublishableKey("{$payment_data.processor_params.publishable_key}");
@@ -117,7 +114,8 @@
         submit.click(function(e){
             // no need to disable the default event because we added cm-no-submit: see a few lines higher
             // hide errors (if any)
-            pin_errors.hide();
+            loading.show();
+            $('.pin-error').remove();
             // Get card details so we can create a token
             // escaping the curly braces ~ Smarty
             var card = {ldelim}
@@ -149,18 +147,18 @@
                 // and triggering a click
                 submit.removeClass('cm-no-submit');
                 submit.addClass('cm-submit');
+                loading.hide();
                 submit.trigger('click');
 
             } else {
-                $('.description', pin_errors).text(response.error_description);
-                var elist = $('ul', pin_errors);
+                loading.hide();
+                submitContainer.append('<div class="pin-error pin-description">'+response.error_description+'</div>');
                 if (response.messages) { 
                     $.each(response.messages, function(i, m){ 
-                        $('input[id^="cc_'+m.param+'"]').addClass('cm-failed-field pin-error');
-                        elist.append('<li>'+m.message+'</li>');
+                        $('input[id^="cc_'+m.param+'"]').addClass('cm-failed-field');
+                        $('input[id^="cc_'+m.param+'"]').parent().append('<div class="pin-error">'+m.message+'</div>');
                     });
                 }
-                pin_errors.show();
                 // re-enable submit
                 submit.prop("disabled", false);
             }
