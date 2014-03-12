@@ -11,10 +11,14 @@ Pin Payments only supports VISA and MasterCard.
 ##Installation
 According to the [Knowledge base](http://kb.cs-cart.com/new-payment) - modified for v4
 
-1. Upload pin_payments.tpl to the __/design/backend/templates/views/payments/components/cc_processors/__ directory on your server
-2. Upload pin_payments.php to the __/app/payments/__ directory on your server
-3. upload cc_pinpayments.tpl to the __/design/themes/[THEME_NAME]/templates/views/orders/components/payments/__ directory on your server
-4. Run queries in cscart_pinpayments.sql on cs-cart database (register payment processor and add language variables)
-5. Set up new payment method under Administration - Payment Methods
+1. Run queries in cscart_pinpayments.sql on cs-cart database (register payment processor and add language variables)
+    - via CS-Cart database management
+    - or via your  database management tool
+2. Upload app and design to your CS-Cart installation to install the files (merge with existing files)
+3. Set up new payment method under Administration - Payment Methods
     1. Select Pin Payments as processor
     2. Add the keys under configure
+
+##To Do
+- Currencies
+- test and live keys ?
