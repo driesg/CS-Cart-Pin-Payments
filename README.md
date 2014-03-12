@@ -8,6 +8,8 @@ Pin Payments only supports VISA and MasterCard.
 
 ## Alpha Release ! Works but needs improvements
 
+- works with CS-Cart 4.1.1. Not tested on 4.1.2
+
 ##Installation
 According to the [Knowledge base](http://kb.cs-cart.com/new-payment) - modified for v4
 
