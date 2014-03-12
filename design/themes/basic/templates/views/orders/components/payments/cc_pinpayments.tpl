@@ -1,4 +1,4 @@
-{script src="js/lib/maskedinput/jquery.maskedinput.min.js"}
+{script src="js/lib/inputmask/jquery.maskedinput.min.js"}
 {script src="js/lib/creditcardvalidator/jquery.creditCardValidator.js"}
 
 {if $payment_data.processor_params.test == 'Y'}
