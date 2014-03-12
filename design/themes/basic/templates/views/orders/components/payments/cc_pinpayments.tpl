@@ -1,11 +1,12 @@
-{script src="js/lib/inputmask/jquery.maskedinput.min.js"}
+{script src="js/lib/inputmask/jquery.inputmask.min.js"}
 {script src="js/lib/creditcardvalidator/jquery.creditCardValidator.js"}
 
-{if $payment_data.processor_params.test == 'Y'}
+{if $payment_method.processor_params.test == 'Y'}
     {script src="https://test-api.pin.net.au/pin.js"}
 {else}
     {script src="https://api.pin.net.au/pin.js"}
 {/if}
+
 <div class="clearfix">
     <div id="hidden-fields">
         <input type="hidden" name="pin_payments" id="pin_payments" value="true">
@@ -72,15 +73,15 @@
     $(document).ready(function() {
         // Default CS-Cart Stuff
         var icons = $('#cc_icons{$id_suffix} li');
-        $("#cc_number{$id_suffix}").mask("9999 9999 9999 9?999", {
+        $("#cc_number{$id_suffix}").inputmask("9999 9999 9999 9[999]", {
             placeholder: ' '
         });
 
-        $("#cc_cvv2{$id_suffix}").mask("999?9", {
+        $("#cc_cvv2{$id_suffix}").inputmask("999[9]", {
             placeholder: ''
         });
 
-        $("#cc_exp_month{$id_suffix},#cc_exp_year{$id_suffix}").mask("99", {
+        $("#cc_exp_month{$id_suffix},#cc_exp_year{$id_suffix}").inputmask("99", {
             placeholder: ''
         });
 
@@ -109,7 +110,7 @@
         submit.addClass('cm-no-submit'); 
 
         // Set Publishable Key
-        Pin.setPublishableKey("{$payment_data.processor_params.publishable_key}");
+        Pin.setPublishableKey("{$payment_method.processor_params.publishable_key}");
 
         submit.click(function(e){
             // no need to disable the default event because we added cm-no-submit: see a few lines higher
